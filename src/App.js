@@ -1,25 +1,31 @@
+import { useState } from 'react';
 import './App.css';
-import logo from './logo.svg';
+import EntryEdit from './components/EntryEdit';
+import EntryList from './components/EntryList';
+import createNewEntry from './utilities/createNewEntry';
+import saveEntry from './utilities/saveEntry';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [userId, setUserId] = useState(1);
+  const [curEntry, setCurEntry] = useState(null);
+  if (curEntry !== null) {
+    return (
+      <EntryEdit
+        entry={curEntry}
+        onSave={(entry) => {
+            saveEntry(entry);
+            setCurEntry(null);
+          }}
+      />
+    )
+  } else {
+    return (
+      <>
+        <EntryList userId={userId} />
+        <button onClick={() => setCurEntry(createNewEntry(userId))}>New</button>
+      </>
+    );
+  }
 }
 
 export default App;
