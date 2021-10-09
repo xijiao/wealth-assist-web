@@ -42,7 +42,9 @@ export default function EntryList({ navigation }) {
                     if (data.length == 0) {
                       return <Text>No Entry</Text>;
                     } else {
-                      return data.map((entry: any) => <Entry entry={entry} />);
+                      return data.map((entry: any) => (
+                        <Entry entry={entry} key={entry.id} />
+                      ));
                     }
                   }}
                   renderError={function (error: any) {

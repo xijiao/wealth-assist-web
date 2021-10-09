@@ -13,4 +13,4 @@ RUN yarn add global expo-cli && yarn
 # start app
 EXPOSE 19002
 EXPOSE 19006
-CMD ["expo", "start"]
+CMD ["expo", "start", "--web"]
