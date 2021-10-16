@@ -50,8 +50,8 @@ export default function EntryList({ navigation }) {
                   renderError={function (error: any) {
                     return <Text>{error.name + ": " + error.message}</Text>;
                   }}
-                  loadingFallback={undefined}
-                />{" "}
+                  loadingFallback={<Text>Loading...</Text>}
+                />
                 <Button
                   onPress={() =>
                     navigation.navigate("EntryEdit", {

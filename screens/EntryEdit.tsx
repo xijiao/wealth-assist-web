@@ -1,5 +1,7 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
 import * as React from "react";
-import { Button, StyleSheet } from "react-native";
+import { Button, Platform, StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Text, View } from "../components/Themed";
 import UserInfoContext from "../context/UserInfoContext";
@@ -7,19 +9,46 @@ import saveEntry from "../utilities/saveEntry";
 
 export default function EntryEdit({ route, navigation }) {
   const [entry, setEntry] = React.useState(route.params.entry);
+
+  const onChangeDate = (event, selectedDate) => {
+    const occurDate = selectedDate || entry.occurDate;
+    setEntry({ ...entry, occurDate });
+  };
+
   return (
     <View style={{ flexDirection: "column" }}>
-      <p>EntryEdit{JSON.stringify(entry)}</p>
+      <Text>EntryEdit{JSON.stringify(entry)}</Text>
       <TextInput
         label="Amount"
         style={styles.edit}
-        value={entry.amount}
-        onChangeText={(amount) => {
+        value={String(entry.amount)}
+        onChangeText={(strAmount) => {
+          const amount = Number(strAmount);
           setEntry({ ...entry, amount });
         }}
         keyboardType="numeric"
       />
-      <Text>{entry.occurDate.toString()}</Text>
+      {Platform.OS === "web" ? (
+        <input
+          value={moment(entry.occurDate).format("yyyy-MM-DDTHH:mm")}
+          type="datetime-local"
+          onChange={(event) => {
+            const occurDate = moment(event.target.value).toISOString();
+            setEntry({ ...entry, occurDate });
+          }}
+        />
+      ) : (
+        <>
+          <Text>"{entry.occurDate}"</Text>
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={new Date(entry.occurDate)}
+            mode="date"
+            display="inline"
+            onChange={onChangeDate}
+          />
+        </>
+      )}
       <View
         style={{
           flexDirection: "row",
@@ -38,6 +67,7 @@ export default function EntryEdit({ route, navigation }) {
             title="Cancel"
           />
         </View>
+
         <UserInfoContext.Consumer>
           {({ userInfo, setUserInfo }) => (
             <View
