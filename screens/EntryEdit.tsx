@@ -1,29 +1,48 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import * as React from "react";
-import { Button, Platform, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import { Button, Platform, StyleSheet, TextInput } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Text, View } from "../components/Themed";
 import UserInfoContext from "../context/UserInfoContext";
 import saveEntry from "../utilities/saveEntry";
 
 export default function EntryEdit({ route, navigation }) {
   const [entry, setEntry] = React.useState(route.params.entry);
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+  const [strAmount, setStrAmount] = React.useState(String(entry.amount));
 
   const onChangeDate = (event, selectedDate) => {
     const occurDate = selectedDate || entry.occurDate;
     setEntry({ ...entry, occurDate });
   };
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    console.warn("A date has been picked: ", date);
+    const occurDate = moment(date).toISOString();
+    setEntry({ ...entry, occurDate });
+  };
+
   return (
-    <View style={{ flexDirection: "column" }}>
+    <View style={styles.container}>
       <Text>EntryEdit{JSON.stringify(entry)}</Text>
       <TextInput
         label="Amount"
         style={styles.edit}
-        value={String(entry.amount)}
+        value={strAmount}
         onChangeText={(strAmount) => {
-          const amount = Number(strAmount);
+          let amount = Number(strAmount);
+          if (isNaN(amount)) amount = Number(strAmount.slice(0, -1));
+          if (isNaN(amount)) amount = 0;
+          if (!isFinite(amount)) amount = Number(strAmount.slice(0, -1));
           setEntry({ ...entry, amount });
         }}
         keyboardType="numeric"
@@ -39,16 +58,17 @@ export default function EntryEdit({ route, navigation }) {
         />
       ) : (
         <>
-          <Text>"{entry.occurDate}"</Text>
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={new Date(entry.occurDate)}
-            mode="date"
-            display="inline"
-            onChange={onChangeDate}
+          <Text onPress={showDatePicker}>"{entry.occurDate}"</Text>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            date={new Date(entry.occurDate)}
+            mode="datetime"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
           />
         </>
       )}
+
       <View
         style={{
           flexDirection: "row",
@@ -93,6 +113,7 @@ export default function EntryEdit({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "column",
     flex: 1,
     marginTop: 8,
     backgroundColor: "aliceblue",
@@ -104,6 +125,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     alignSelf: "flex-end",
     minWidth: "100%",
+    height: "10%",
+    // height: "40px",
     textAlign: "right",
   },
 });
