@@ -1,7 +1,7 @@
 import { useIsFocused } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Button, Platform, StyleSheet } from "react-native";
+import { Button, Platform, ScrollView, StyleSheet } from "react-native";
 import Entry from "../components/Entry";
 import Fetch from "../components/Fetch";
 import { Text, View } from "../components/Themed";
@@ -40,7 +40,7 @@ export default function EntryList({ navigation }) {
         <UserInfoContext.Consumer>
           {({ userInfo, setUserInfo }) => {
             return (
-              <>
+              <ScrollView>
                 <Fetch
                   url={BACKEND_BASE_URL + "/" + userInfo.id + "/entry"}
                   renderSuccess={(data: Array<any>) => {
@@ -57,23 +57,29 @@ export default function EntryList({ navigation }) {
                   }}
                   loadingFallback={<Text>Loading...</Text>}
                 />
-                <View style={styles.buttonContainer}>
-                  <Button
-                    onPress={() =>
-                      navigation.navigate("EntryEdit", {
-                        entry: createNewEntry(userInfo.id),
-                      })
-                    }
-                    title="New"
-                  />
-                </View>
-              </>
+                {/* Use a light status bar on iOS to account for the black space above the modal */}
+                <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+              </ScrollView>
             );
           }}
         </UserInfoContext.Consumer>
       )}
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      <View style={styles.buttonContainer}>
+        <UserInfoContext.Consumer>
+          {({ userInfo, setUserInfo }) => {
+            return (
+              <Button
+                onPress={() =>
+                  navigation.navigate("EntryEdit", {
+                    entry: createNewEntry(userInfo.id),
+                  })
+                }
+                title="New"
+              />
+            );
+          }}
+        </UserInfoContext.Consumer>
+      </View>
     </View>
   );
 }
