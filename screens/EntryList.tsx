@@ -24,6 +24,11 @@ const styles = StyleSheet.create({
     height: 1,
     width: "80%",
   },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+  },
 });
 
 export default function EntryList({ navigation }) {
@@ -52,14 +57,16 @@ export default function EntryList({ navigation }) {
                   }}
                   loadingFallback={<Text>Loading...</Text>}
                 />
-                <Button
-                  onPress={() =>
-                    navigation.navigate("EntryEdit", {
-                      entry: createNewEntry(userInfo.id),
-                    })
-                  }
-                  title="New"
-                />
+                <View style={styles.buttonContainer}>
+                  <Button
+                    onPress={() =>
+                      navigation.navigate("EntryEdit", {
+                        entry: createNewEntry(userInfo.id),
+                      })
+                    }
+                    title="New"
+                  />
+                </View>
               </>
             );
           }}
