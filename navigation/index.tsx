@@ -3,6 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
   DarkTheme,
   DefaultTheme,
@@ -36,11 +37,20 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
-        component={Home}
+        name="Drawer"
+        component={DrawerNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen name="EntryEdit" component={EntryEdit} />
     </Stack.Navigator>
+  );
+}
+
+const Drawer = createDrawerNavigator();
+function DrawerNavigator({ navigation }) {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen name="Home" component={Home} />
+    </Drawer.Navigator>
   );
 }
